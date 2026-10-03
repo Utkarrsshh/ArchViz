@@ -1,0 +1,4 @@
+# Environment package binaries (GLBs, matrix data, source textures) are stored with Git LFS.
+public/environments/**/*.glb filter=lfs diff=lfs merge=lfs -text
+public/environments/**/*.bin filter=lfs diff=lfs merge=lfs -text
+public/environments/**/*.png filter=lfs diff=lfs merge=lfs -text

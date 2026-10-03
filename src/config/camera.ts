@@ -1,27 +1,32 @@
 import type { CameraSettings, CameraWaypoint } from '../systems/camera/cameraTypes'
 
 export const CAMERA_SETTINGS: CameraSettings = {
-  initialPosition: [18, 12, 22],
-  initialTarget: [0, 3, 0],
+  // Frames the polyhouse environment (site spans x -45..146, z -70..-1).
+  initialPosition: [-30, 42, 32],
+  initialTarget: [42, 0, -38],
   initialFov: 45,
   minFov: 20,
   maxFov: 90,
   near: 0.1,
-  far: 500,
+  far: 1500,
   minDistance: 4,
-  maxDistance: 60,
+  // Blender CAM_SITE orbits from ~277 m; keep headroom so marker framings are not clamped.
+  maxDistance: 320,
   minPolarAngle: 0.05,
   maxPolarAngle: Math.PI / 2 - 0.05,
   minAzimuthAngle: -Infinity,
   maxAzimuthAngle: Infinity,
-  targetBounds: { min: [-30, 0, -30], max: [30, 12, 30] },
+  targetBounds: { min: [-60, 0, -90], max: [160, 15, 20] },
   smoothTime: 0.25,
   draggingSmoothTime: 0.125,
   defaultTransitionDuration: 1.5,
   lockInteractionDuringTransition: true,
 }
 
-/** Development waypoints for the placeholder building. Replace per project. */
+/**
+ * Development waypoints, used only when the environment package has no Blender camera
+ * markers (layout.json "markers") or fails to load.
+ */
 export const CAMERA_WAYPOINTS: readonly CameraWaypoint[] = [
   {
     id: 'overview',

@@ -1,6 +1,6 @@
 import type { PropertyPinConfig } from '../systems/pins/pinTypes'
 
-/** Development pins for the placeholder building. Replace per project. */
+/** Development pins, used only when the environment package has no Blender markers. */
 export const PROPERTY_PINS: readonly PropertyPinConfig[] = [
   {
     id: 'pin-overview',
