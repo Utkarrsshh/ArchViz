@@ -10,7 +10,7 @@ export interface PlantPart {
 /** The source geometry for one LOD level: one entry per variant node. */
 export interface PlantLodSource {
   readonly level: number
-  /** variants[slot] = parts of that variant node. L2/L3 have a single shared slot. */
+  /** variants[slot] = parts of that variant node. A level with one node has a single shared slot. */
   readonly variants: readonly (readonly PlantPart[])[]
 }
 
@@ -31,7 +31,7 @@ export function createLodBands(lod: readonly ManifestLodLevel[]): PlantLodBands 
   return { levelCount: lod.length, thresholdsSq }
 }
 
-/** LOD level for a squared camera distance: L0 for [0, 12), L1 for [12, 20), ... */
+/** LOD level for a squared camera distance: level i covers [lod[i - 1].maxDistance, lod[i].maxDistance). */
 export function lodLevelForDistanceSq(bands: PlantLodBands, distanceSq: number): number {
   const { thresholdsSq, levelCount } = bands
   for (let i = 0; i < levelCount - 1; i++) {
@@ -49,7 +49,7 @@ const IDENTITY = new Matrix4()
 
 /**
  * Collects the primitives under a named plant node. GLTFLoader turns a single-primitive
- * mesh into a Mesh and a multi-primitive mesh (e.g. L1 leaf/stem/fruit) into a Group of
+ * mesh into a Mesh and a multi-primitive mesh (e.g. leaf/stem/fruit materials) into a Group of
  * Meshes, so both shapes are handled.
  *
  * Instance matrices replace the node's own transform, so every node on the path must be

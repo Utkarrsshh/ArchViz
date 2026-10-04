@@ -1,22 +1,31 @@
 import type { CameraSettings, CameraWaypoint } from '../systems/camera/cameraTypes'
 
+/**
+ * Scene-agnostic camera behaviour. Once layout.json has loaded, the scene-dependent values
+ * are fitted to the package (systems/environment/environmentCamera.ts):
+ *
+ *   initialPosition / initialTarget  HOME_CAMERA_ID's marker, else a framing of layout.json "site"
+ *   targetBounds                     the site plus a margin and every marker target (when null here)
+ *   maxDistance / far                raised as needed so the site and every marker fit
+ *
+ * The values below apply until then, and when no package loads.
+ */
 export const CAMERA_SETTINGS: CameraSettings = {
-  // Frames the polyhouse environment (site spans x -45..146, z -70..-1).
-  initialPosition: [-30, 42, 32],
-  initialTarget: [42, 0, -38],
+  initialPosition: [-30, 20, 30],
+  initialTarget: [0, 0, 0],
   initialFov: 45,
   minFov: 20,
   maxFov: 90,
   near: 0.1,
   far: 1500,
   minDistance: 4,
-  // Blender CAM_SITE orbits from ~277 m; keep headroom so marker framings are not clamped.
-  maxDistance: 320,
+  maxDistance: 300,
   minPolarAngle: 0.05,
   maxPolarAngle: Math.PI / 2 - 0.05,
   minAzimuthAngle: -Infinity,
   maxAzimuthAngle: Infinity,
-  targetBounds: { min: [-60, 0, -90], max: [160, 15, 20] },
+  // null: derived from the package. Set a box here to pin the panning limits by hand.
+  targetBounds: null,
   smoothTime: 0.25,
   draggingSmoothTime: 0.125,
   defaultTransitionDuration: 1.5,
@@ -24,31 +33,14 @@ export const CAMERA_SETTINGS: CameraSettings = {
 }
 
 /**
- * Development waypoints, used only when the environment package has no Blender camera
- * markers (layout.json "markers") or fails to load.
+ * Blender camera marker (layout.json cameraMarkers[].id, e.g. "cam-home") used as the start
+ * view and the reset() target. null frames the whole site instead.
  */
-export const CAMERA_WAYPOINTS: readonly CameraWaypoint[] = [
-  {
-    id: 'overview',
-    name: 'Overview',
-    position: CAMERA_SETTINGS.initialPosition,
-    target: CAMERA_SETTINGS.initialTarget,
-    fov: CAMERA_SETTINGS.initialFov,
-  },
-  {
-    id: 'front',
-    name: 'Front Elevation',
-    position: [0, 4.5, 24],
-    target: [0, 4, 0],
-    fov: 40,
-    duration: 1.8,
-  },
-  {
-    id: 'upper',
-    name: 'Upper Terrace',
-    position: [-12, 16, 11],
-    target: [-1.5, 8, -0.5],
-    fov: 50,
-    duration: 2,
-  },
-]
+export const HOME_CAMERA_ID: string | null = null
+
+/**
+ * Fallback waypoints, used only when the environment package has no Blender camera
+ * markers (layout.json "markers") or fails to load. Project cameras come from Blender
+ * CAM_* markers; leave this empty unless a project deliberately ships without markers.
+ */
+export const CAMERA_WAYPOINTS: readonly CameraWaypoint[] = []

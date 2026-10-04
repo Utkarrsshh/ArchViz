@@ -30,7 +30,7 @@ function logShellSummary(scene: Object3D, ktx2: boolean): void {
 }
 
 /**
- * The static polyhouse shell, rendered exactly as exported: node transforms,
+ * The static environment shell, rendered exactly as exported: node transforms,
  * embedded textures and glTF material extensions are used as GLTFLoader produces them.
  */
 export default function EnvironmentShell({ asset, ktx2, shadows, onReady }: EnvironmentShellProps) {

@@ -336,25 +336,28 @@ export function parseEnvironmentManifest(json: unknown, baseUrl: string): Enviro
 
   const scene = expectRecord(root.scene, 'scene')
   const shellPath = expectString(scene.shell, 'scene.shell')
-  const plantsGlb = expectString(scene.plants, 'scene.plants')
+  const plantsGlb = optionalString(scene.plants, 'scene.plants')
+  const instanced = root.instanced === undefined ? {} : expectRecord(root.instanced, 'instanced')
 
   // The plant set is the variant-driven instanced set that draws from scene.plants.
-  const instanced = expectRecord(root.instanced, 'instanced')
-  const plantEntries = Object.entries(instanced).filter(
-    ([, set]) => isRecord(set) && set.glb === plantsGlb && 'variantNodes' in set,
-  )
-  if (plantEntries.length !== 1) {
-    fail(`expected exactly one instanced set with glb "${plantsGlb}" and variantNodes, found ${plantEntries.length}`)
+  let plants: PlantSetDefinition | null = null
+  if (plantsGlb) {
+    const plantEntries = Object.entries(instanced).filter(
+      ([, set]) => isRecord(set) && set.glb === plantsGlb && 'variantNodes' in set,
+    )
+    if (plantEntries.length !== 1) {
+      fail(`expected exactly one instanced set with glb "${plantsGlb}" and variantNodes, found ${plantEntries.length}`)
+    }
+    const [plantKey, plantRaw] = plantEntries[0]
+    plants = validatePlantSet(plantKey, plantRaw as Record<string, unknown>, baseUrl)
   }
-  const [plantKey, plantRaw] = plantEntries[0]
-  const plants = validatePlantSet(plantKey, plantRaw as Record<string, unknown>, baseUrl)
 
   return {
     baseUrl,
     manifest: root as unknown as EnvironmentManifest,
     shellUrl: resolvePackagePath(baseUrl, shellPath, 'scene.shell'),
     plants,
-    cells: validateCells(root.cells, plants.count),
+    cells: plants ? validateCells(root.cells, plants.count) : [],
     assets: validateAssets(scene, root, baseUrl),
     fence: typeof scene.fence === 'string' ? validateNodeSets(instanced, scene.fence, baseUrl) : [],
     markers: validateMarkers(root.markers),
@@ -374,6 +377,12 @@ export async function loadEnvironmentManifest(
   const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
   const url = `${normalizedBase}${manifestFile}`
   const response = await fetch(url, { signal })
+  // A missing file is a 404, or the SPA's index.html on dev servers and hosts with a fallback.
+  if (response.status === 404 || (response.headers.get('content-type') ?? '').includes('text/html')) {
+    throw new EnvironmentManifestError(
+      `No environment package at ${url}. Place the Blender export under public/environments/<id>/ and set VITE_ENVIRONMENT_ID.`,
+    )
+  }
   if (!response.ok) {
     throw new EnvironmentManifestError(`Failed to fetch ${url}: HTTP ${response.status}`)
   }

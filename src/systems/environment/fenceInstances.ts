@@ -29,8 +29,8 @@ function meshesOf(node: Object3D): Mesh[] {
  * Picks the glTF node for a fence set. The manifest names a node and records its
  * triangle count; normally both agree. When they disagree and exactly one of the other
  * manifest-named fence nodes has the recorded triangle count, that node is used and the
- * mismatch is reported (the polyhouse export has the corner/gate/brace node names rotated;
- * the matrices and triangle counts agree with each other and with the fence layout).
+ * mismatch is reported. This tolerates exports whose node names were swapped while the
+ * matrices and triangle counts stayed consistent; a correct export never triggers it.
  */
 function resolveNode(
   set: NodeInstancedSetDefinition,

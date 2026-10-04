@@ -13,7 +13,7 @@ function isTransmissive(material: Material | Material[]): boolean {
  *
  * Names are matched against the mesh and its ancestors (GLTFLoader puts multi-primitive
  * nodes in a Group), comparing sanitized names because three.js sanitizes node names
- * (e.g. "props__entracnce platform" becomes "props__entracnce_platform").
+ * (e.g. "props__entrance platform" becomes "props__entrance_platform").
  *
  *   cast         → casts and receives
  *   receiveOnly  → receives only

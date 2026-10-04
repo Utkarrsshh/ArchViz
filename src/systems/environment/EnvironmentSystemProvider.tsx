@@ -161,10 +161,14 @@ export default function EnvironmentSystemProvider({
       maybeStartWave3()
     }
 
-    settle('plants', 'loading')
-    loadPlantInstances(loaded.plants, signal).then((data) => {
-      if (!signal.aborted) setPlantData(data)
-    }, fail('plants'))
+    if (loaded.plants && loaded.assets.plants) {
+      settle('plants', 'loading')
+      loadPlantInstances(loaded.plants, signal).then((data) => {
+        if (!signal.aborted) setPlantData(data)
+      }, fail('plants'))
+    } else {
+      settle('plants', 'ready') // package has no plants
+    }
 
     if (!loaded.assets.fence || loaded.fence.length === 0) {
       settle('fence', 'ready') // package has no fence

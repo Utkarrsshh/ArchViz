@@ -73,11 +73,16 @@ export default function CameraController() {
     controls.setBoundary(
       bounds ? new Box3(new Vector3(...bounds.min), new Vector3(...bounds.max)) : undefined,
     )
+    // Canvas only applies its camera props once; later settings (fitted to the loaded
+    // environment) reach the camera here.
     const initialCamera = getThreeState().camera
     if (initialCamera instanceof PerspectiveCamera) {
       initialCamera.fov = settings.initialFov
+      initialCamera.near = settings.near
+      initialCamera.far = settings.far
       initialCamera.updateProjectionMatrix()
     }
+    fovTargetRef.current = null
 
     const setFov = (fov: number, duration: number) => {
       fovDampingRef.current = FOV_DAMPING_PER_DURATION / duration

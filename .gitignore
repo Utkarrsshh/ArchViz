@@ -31,6 +31,9 @@ dist-ssr/
 *.sln
 *.sw?
 
+# Agent tooling (worktrees, state)
+.kilo/
+
 # OS files
 Thumbs.db
 Desktop.ini

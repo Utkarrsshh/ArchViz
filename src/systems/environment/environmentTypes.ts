@@ -36,7 +36,7 @@ export interface ManifestVariantInstancedSet {
   readonly lodNote?: string
 }
 
-/** An instanced set drawn from a single node (fence parts; Part 2). */
+/** An instanced set drawn from a single node of the fence GLB (fence parts or any repeated element). */
 export interface ManifestNodeInstancedSet {
   readonly glb: string
   readonly node: string
@@ -72,16 +72,18 @@ export interface EnvironmentManifest {
     readonly grid: Vec2Tuple
     readonly cellSize: Vec2Tuple
   }
+  /** Only shell is required; a package without vegetation, fence or props omits those keys. */
   readonly scene: {
     readonly shell: string
-    readonly plants: string
+    readonly plants?: string
     readonly fence?: string
     readonly props?: string
   }
-  readonly instanced: Readonly<Record<string, ManifestInstancedSet>>
+  readonly instanced?: Readonly<Record<string, ManifestInstancedSet>>
   /** Advisory shadow assignments by glTF node name. */
   readonly shadows?: ManifestShadows
-  readonly cells: readonly ManifestCell[]
+  /** Plant cells; required (non-empty) when scene.plants is present. */
+  readonly cells?: readonly ManifestCell[]
   readonly package?: {
     readonly name?: string
     readonly version?: string
@@ -94,7 +96,7 @@ export interface EnvironmentManifest {
   readonly optimized?: {
     readonly ktx2?: Readonly<Partial<Record<EnvironmentAssetKey, string>>> & { readonly note?: string }
   }
-  /** Blender CAM_* / PIN_* markers (tools/blender/export_webarchviz_markers.py). */
+  /** Blender CAM_* / PIN_* markers (WEB_MARKERS collection, written by the Blender marker exporter). */
   readonly markers?: ManifestMarkers
   readonly lighting?: { readonly sun?: ManifestSun }
 }
@@ -177,7 +179,7 @@ export interface PlantSetDefinition {
   readonly variantNodes: readonly (readonly string[])[]
   /** Sorted by level; the last entry has maxDistance === null. */
   readonly lod: readonly ManifestLodLevel[]
-  /** Exported cross-fade width. Parsed and kept; Part 1 uses hard LOD switches. */
+  /** Exported cross-fade width. Parsed and kept; the renderer currently uses hard LOD switches. */
   readonly fadeMetres: number | null
 }
 
@@ -212,7 +214,9 @@ export interface EnvironmentDefinition {
   readonly baseUrl: string
   readonly manifest: EnvironmentManifest
   readonly shellUrl: string
-  readonly plants: PlantSetDefinition
+  /** null when the package has no scene.plants. */
+  readonly plants: PlantSetDefinition | null
+  /** Plant cells; empty without plants. */
   readonly cells: readonly EnvironmentCell[]
   readonly assets: Readonly<Record<EnvironmentAssetKey, EnvironmentAsset | null>>
   readonly fence: readonly NodeInstancedSetDefinition[]

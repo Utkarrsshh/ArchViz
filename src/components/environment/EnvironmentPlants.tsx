@@ -26,8 +26,8 @@ interface EnvironmentPlantsProps {
 
 /**
  * LOD levels allowed to cast shadows: those that can be within castPlantsWithin metres of
- * the camera. L0 (33k tris per plant) is excluded: casting it would add the entire near
- * field's full-detail geometry to the shadow pass again. See the Part 2 report.
+ * the camera. Level 0 (full detail, the heaviest geometry) is always excluded: casting it
+ * would add the entire near field's full-detail geometry to the shadow pass again.
  */
 function shadowCastLevels(plants: PlantSetDefinition, shadows: EnvironmentShadowAdvice): Set<number> {
   const within = shadows.castPlantsWithin

@@ -54,8 +54,8 @@ export async function loadInstanceMatrices(url: string, count: number, signal?: 
  *
  * Format (layout.json "matrixOrder"): one column-major 4x4 float32 matrix per
  * instance in glTF Y-up space, passed to InstancedMesh unchanged. The matrices
- * are never decomposed: part of the crop carries non-uniform scale under
- * rotation (shear), which position/quaternion/scale cannot represent.
+ * are never decomposed: an export may carry non-uniform scale under rotation
+ * (shear), which position/quaternion/scale cannot represent.
  */
 export async function loadPlantInstances(
   plants: PlantSetDefinition,

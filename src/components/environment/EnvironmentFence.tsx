@@ -17,7 +17,7 @@ interface EnvironmentFenceProps {
   onReady: (usedKtx2: boolean) => void
 }
 
-/** Perimeter fence: one InstancedMesh per primitive per manifest set (6 meshes, 515 instances). */
+/** Single-node instanced sets from the fence GLB: one InstancedMesh per primitive per manifest set. */
 export default function EnvironmentFence({ asset, ktx2, sets, matrices, shadows, onReady }: EnvironmentFenceProps) {
   const { nodes } = useEnvironmentGLTF(asset, ktx2)
 

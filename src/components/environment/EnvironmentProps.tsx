@@ -11,9 +11,9 @@ interface EnvironmentPropsProps {
 }
 
 /**
- * props.glb holds seven unique, already-placed static meshes (gate frame, footings, twine,
- * grow bags, drip lines, platform, misc). There is no repeated-asset metadata to instance,
- * so the GLB is rendered as exported.
+ * The props GLB holds unique, already-placed static meshes. There is no repeated-asset
+ * metadata to instance, so the GLB is rendered as exported (repeated parts belong in an
+ * instanced set instead).
  */
 export default function EnvironmentProps({ asset, ktx2, shadows, onReady }: EnvironmentPropsProps) {
   const { scene } = useEnvironmentGLTF(asset, ktx2)

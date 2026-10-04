@@ -2,8 +2,6 @@ import { Box3, Matrix4, Vector3 } from 'three'
 import type { Vec3Tuple } from '../camera/cameraTypes'
 import type { EnvironmentDefinition } from './environmentTypes'
 
-/** Height of the shadow-relevant volume above the site (shell ridge ≈ 8 m). */
-const SITE_HEIGHT = 10
 /** Distance from the site centre to the light; only direction matters for a sun. */
 const LIGHT_DISTANCE = 250
 
@@ -19,14 +17,14 @@ export interface SunRig {
 }
 
 /**
- * Places a directional light along the exported Blender sun direction (or a default)
- * and fits its orthographic shadow camera tightly around the site footprint, so the
- * shadow map covers the whole environment and nothing else.
+ * Places a directional light along the exported Blender sun direction (or a fallback)
+ * and fits its orthographic shadow camera tightly around the site footprint up to
+ * `volumeHeight`, so the shadow map covers the whole environment and nothing else.
  */
-export function computeSunRig(definition: EnvironmentDefinition, fallbackDirection: Vec3Tuple): SunRig {
+export function computeSunRig(definition: EnvironmentDefinition, fallbackDirection: Vec3Tuple, volumeHeight: number): SunRig {
   const direction = new Vector3(...(definition.sun?.direction ?? fallbackDirection)).normalize()
   const { minX, maxX, minZ, maxZ } = definition.siteBounds
-  const site = new Box3(new Vector3(minX, 0, minZ), new Vector3(maxX, SITE_HEIGHT, maxZ))
+  const site = new Box3(new Vector3(minX, 0, minZ), new Vector3(maxX, volumeHeight, maxZ))
   const center = site.getCenter(new Vector3())
   const position = center.clone().addScaledVector(direction, -LIGHT_DISTANCE)
 

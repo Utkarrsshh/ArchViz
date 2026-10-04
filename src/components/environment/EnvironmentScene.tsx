@@ -99,13 +99,13 @@ export default function EnvironmentScene() {
         </EnvironmentAssetBoundary>
       )}
 
-      {parts.plants !== 'idle' && plantData && assets.plants && (
+      {parts.plants !== 'idle' && plantData && assets.plants && definition.plants && (
         <EnvironmentAssetBoundary ktx2={ktx2('plants')} onKtx2Fallback={plants.onKtx2Fallback} onError={plants.onError}>
           {(withKtx2) => (
             <EnvironmentPlants
               asset={assets.plants!}
               ktx2={withKtx2}
-              plants={definition.plants}
+              plants={definition.plants!}
               cells={definition.cells}
               data={plantData}
               stats={plantStats}
